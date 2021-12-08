@@ -7,7 +7,7 @@ require (
 	github.com/atotto/clipboard v0.1.4
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gdamore/tcell/v2 v2.3.3
-	github.com/makeworld-the-better-one/go-gemini v0.11.0
+	github.com/makeworld-the-better-one/go-gemini v0.12.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mmcdole/gofeed v1.1.2
 	github.com/muesli/termenv v0.9.0
@@ -22,6 +22,6 @@ replace github.com/atotto/clipboard => github.com/awfulcooking/clipboard v0.1.5-
 
 replace github.com/gdamore/tcell/v2 => github.com/awfulcooking/tcell/v2 v2.4.1-0.20211128170204-5ebcb5571e5d
 
-replace github.com/makeworld-the-better-one/go-gemini => github.com/awfulcooking/go-gemini v0.11.2-0.20211202044711-498169b7378e
+replace github.com/makeworld-the-better-one/go-gemini => github.com/awfulcooking/go-gemini v0.11.2-0.20211208022247-b8cbd9d65b74
 
 replace golang.org/x/term => github.com/awfulcooking/term v0.0.0-20211128155416-2652f7c0d88b

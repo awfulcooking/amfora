@@ -62,6 +62,8 @@ github.com/awfulcooking/clipboard v0.1.5-0.20211201163140-3a50b14162df h1:NFpdok
 github.com/awfulcooking/clipboard v0.1.5-0.20211201163140-3a50b14162df/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/awfulcooking/go-gemini v0.11.2-0.20211202044711-498169b7378e h1:woCmUVrtI2V7skTiQnSk1SEyjp0Z5EgdqipQw0tTy1E=
 github.com/awfulcooking/go-gemini v0.11.2-0.20211202044711-498169b7378e/go.mod h1:8eD03AxpLCcWx2hQd8zhHB1M+8qlDkM/HYnQhbf/6/A=
+github.com/awfulcooking/go-gemini v0.11.2-0.20211208022247-b8cbd9d65b74 h1:JUjWTCZmUqTZs/29fs/Y/ZDmO0ka9ZZgKUgFyrc+m+Q=
+github.com/awfulcooking/go-gemini v0.11.2-0.20211208022247-b8cbd9d65b74/go.mod h1:8eD03AxpLCcWx2hQd8zhHB1M+8qlDkM/HYnQhbf/6/A=
 github.com/awfulcooking/tcell/v2 v2.4.1-0.20211128170204-5ebcb5571e5d h1:GGONl5jDMT0wtMWEEu4sH67JkaMCYqTcyW2Xha9uy/o=
 github.com/awfulcooking/tcell/v2 v2.4.1-0.20211128170204-5ebcb5571e5d/go.mod h1:X4k/PfBso5eCwoulBKD17GlepBi4ecMbxPM1O1EG2is=
 github.com/awfulcooking/term v0.0.0-20211128155416-2652f7c0d88b h1:xzEg9LjSS8aku4qx07hjNn8YxdPrKjOwaxouhImrOlc=
