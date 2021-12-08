@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.9.0] - 2021-12-07
 ### Added
 - Support for version 1.1 JSON feeds
 - Copy current URL or selected URL to clipboard (#220, #225)
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support paths with spaces in `[url-handlers]` config settings (#214)
 - Display info modal when opening URL with custom application
 - Files can be opened by relative path on the commandline (#231, #257)
+- Support keybindings that use <kbd>Shift</kbd> (#269)
 
 ### Changed
 - Bookmarks are stored using XML in the XBEL format, old bookmarks are transferred (#68)
@@ -33,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Removed
 - Favicon support (#199)
-- The default Amfora theme, get it back [here](https://github.com/makeworld-the-better-one/amfora/blob/master/contrib/themes/amfora.toml)
+- The default Amfora theme, get it back [here](https://github.com/makeworld-the-better-one/amfora/blob/master/contrib/themes/amfora.toml) (#181)
 
 ### Fixed
 - Help text is now the same color as `regular_text` in the theme config
