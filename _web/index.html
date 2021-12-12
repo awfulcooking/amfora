@@ -858,9 +858,12 @@
 
 	<script>
 		const themes = [...document.querySelectorAll("template")].map(el => el.id.replace(/^theme-/, ''));
-		const randomTheme = themes[Math.floor(Math.random() * themes.length)];
 
-		const theme = localStorage.amforaTheme || /* randomTheme */ "gruvbox-dark";
+		const queryStringTheme = location.search.slice(1);
+		if (themes.includes(queryStringTheme))
+			localStorage.amforaTheme = queryStringTheme;
+
+		const theme = localStorage.amforaTheme || "tokyo-night";
 
 		if (theme) {
 			const themeEl = document.getElementById(`theme-${theme}`);
