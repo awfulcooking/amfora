@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -376,6 +377,9 @@ func Init(version, commit, builtBy string) {
 // Stop stops the app gracefully.
 // In the future it will handle things like ongoing downloads, etc
 func Stop() {
+	if runtime.GOOS == "js" {
+		return
+	}
 	App.Stop()
 }
 
