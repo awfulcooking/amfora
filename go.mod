@@ -4,6 +4,7 @@ go 1.15
 
 require (
 	code.rocketnine.space/tslocum/cview v1.5.6-0.20210530175404-7e8817f20bdc
+	github.com/alecthomas/chroma v0.9.2
 	github.com/atotto/clipboard v0.1.4
 	github.com/dustin/go-humanize v1.0.0
 	github.com/gdamore/tcell/v2 v2.3.3

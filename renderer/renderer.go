@@ -5,6 +5,7 @@
 package renderer
 
 import (
+	"bytes"
 	"fmt"
 	urlPkg "net/url"
 	"regexp"
@@ -12,12 +13,24 @@ import (
 	"strings"
 
 	"code.rocketnine.space/tslocum/cview"
+	"github.com/alecthomas/chroma/formatters"
+	"github.com/alecthomas/chroma/lexers"
+	"github.com/alecthomas/chroma/styles"
 	"github.com/makeworld-the-better-one/amfora/config"
 	"github.com/spf13/viper"
 )
 
+// Terminal color information, set during display initialization by display/display.go
+var TermColor string
+
 // Regex for identifying ANSI color codes
 var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*m`)
+
+// Regex for identifying possible language string, based on RFC 6838 and lexers used by Chroma
+var langRegex = regexp.MustCompile(`^([a-zA-Z0-9]+/)?[a-zA-Z0-9]+([a-zA-Z0-9!_\#\$\&\-\^\.\+]+)*`)
+
+// Regex for removing trailing newline (without disturbing ANSI codes) from code formatted with Chroma
+var trailingNewline = regexp.MustCompile(`(\r?\n)(?:\x1b\[[0-9;]*m)*$`)
 
 // RenderANSI renders plain text pages containing ANSI codes.
 // Practically, it is used for the text/x-ansi.
@@ -231,13 +244,13 @@ func convertRegularGemini(s string, numLinks, width int, proxied bool) (string, 
 
 					wrappedLink = wrapLine(linkText, width,
 						strings.Repeat(" ", indent)+
-							`["`+strconv.Itoa(num-1)+`"]`+linkTag,
+							`["`+strconv.Itoa(num-1)+`"]`,
 						`[::-][""]`,
 						false, // Don't indent the first line, it's the one with link number
 					)
 
 					wrappedLink[0] = `[::b][` + strconv.Itoa(num) + "[][::-]" + spacing +
-						`["` + strconv.Itoa(num-1) + `"]` + linkTag +
+						`["` + strconv.Itoa(num-1) + `"]` +
 						wrappedLink[0] + `[::-][""]`
 				}
 			}
@@ -315,11 +328,46 @@ func RenderGemini(s string, width int, proxied bool) (string, []string) {
 	pre := false
 	buf := "" // Block of regular or preformatted lines
 
+	// Language, formatter, and style for syntax highlighting
+	lang := ""
+	formatterName := TermColor
+	styleName := viper.GetString("a-general.highlight_style")
+
 	// processPre is for rendering preformatted blocks
 	processPre := func() {
 
+		syntaxHighlighted := false
+
+		// Perform syntax highlighting if language is set
+		if lang != "" {
+			style := styles.Get(styleName)
+			if style == nil {
+				style = styles.Fallback
+			}
+			formatter := formatters.Get(formatterName)
+			if formatter == nil {
+				formatter = formatters.Fallback
+			}
+			lexer := lexers.Get(lang)
+			if lexer == nil {
+				lexer = lexers.Fallback
+			}
+
+			// Tokenize and format the text after stripping ANSI codes, replacing buffer if there are no errors
+			iterator, err := lexer.Tokenise(nil, ansiRegex.ReplaceAllString(buf, ""))
+			if err == nil {
+				formattedBuffer := new(bytes.Buffer)
+				if formatter.Format(formattedBuffer, style, iterator) == nil {
+					// Strip extra newline added by Chroma and replace buffer
+					buf = string(trailingNewline.ReplaceAll(formattedBuffer.Bytes(), []byte{}))
+				}
+				syntaxHighlighted = true
+			}
+		}
+
 		// Support ANSI color codes in preformatted blocks - see #59
-		if viper.GetBool("a-general.color") && viper.GetBool("a-general.ansi") {
+		// This will also execute if code highlighting was successful for this block
+		if viper.GetBool("a-general.color") && (viper.GetBool("a-general.ansi") || syntaxHighlighted) {
 			buf = cview.TranslateANSI(buf)
 			// The TranslateANSI function will reset the colors when it encounters
 			// an ANSI reset code, injecting a full reset tag: [-:-:-]
@@ -341,8 +389,12 @@ func RenderGemini(s string, width int, proxied bool) (string, []string) {
 		// Lines are modified below to always end with \r\n
 		buf = strings.TrimSuffix(buf, "\r\n")
 
-		rendered += fmt.Sprintf("[%s]", config.GetColorString("preformatted_text")) +
-			buf + fmt.Sprintf("[%s:%s:-]\r\n", config.GetColorString("regular_text"), config.GetColorString("bg"))
+		if viper.GetBool("a-general.color") {
+			rendered += fmt.Sprintf("[%s]", config.GetColorString("preformatted_text")) +
+				buf + fmt.Sprintf("[%s:%s:-]\r\n", config.GetColorString("regular_text"), config.GetColorString("bg"))
+		} else {
+			rendered += buf + "\r\n"
+		}
 	}
 
 	// processRegular processes non-preformatted sections
@@ -362,9 +414,21 @@ func RenderGemini(s string, width int, proxied bool) (string, []string) {
 				// Don't add the current line with backticks
 				processPre()
 
+				// Clear the language
+				lang = ""
 			} else {
 				// Not preformatted, regular text
 				processRegular()
+
+				if viper.GetBool("a-general.highlight_code") {
+					// Check for alt text indicating a language that Chroma can highlight
+					alt := strings.TrimSpace(strings.TrimPrefix(lines[i], "```"))
+					if matches := langRegex.FindStringSubmatch(alt); matches != nil {
+						if lexers.Get(matches[0]) != nil {
+							lang = matches[0]
+						}
+					}
+				}
 			}
 			buf = "" // Clear buffer for next block
 			pre = !pre
